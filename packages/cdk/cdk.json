@@ -38,7 +38,7 @@
     "samlCognitoDomainName": "",
     "samlCognitoFederatedIdentityProviderName": "",
     "hiddenUseCases": {},
-    "modelRegion": "us-west-1",
+    "modelRegion": "us-west-2",
     "modelIds": [
       "us.amazon.nova-premier-v1:0",
       "us.amazon.nova-pro-v1:0",
@@ -46,13 +46,20 @@
       "us.amazon.nova-micro-v1:0",
       "amazon.titan-text-premier-v1:0"
     ],
-    "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:0"],
+    "imageGenerationModelIds": [
+      "amazon.titan-image-generator-v2:0",
+      "amazon.titan-image-generator-v1",
+      "amazon.nova-canvas-v1:0"
+    ],
+    "videoGenerationModelIds": [
+      "amazon.nova-reel-v1:0",
+      "amazon.nova-reel-v1:1"
+    ],
     "speechToSpeechModelIds": ["amazon.nova-sonic-v1:0"],
     "endpointNames": [],
     "agentEnabled": false,
     "searchAgentEnabled": false,
-    "searchEngine": "Brave",
+    "searchEngine": "",
     "searchApiKey": "",
     "agents": [],
     "inlineAgents": false,
