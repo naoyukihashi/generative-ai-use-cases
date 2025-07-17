@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "awslabs.aws-pricing-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-pricing-mcp-server@latest"],
+    },
     "time": {
       "command": "uvx",
       "args": ["mcp-server-time"]
