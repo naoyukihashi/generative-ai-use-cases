@@ -15,6 +15,8 @@ chat:
   delete_link: Xóa liên kết
   delete_link_message: Bằng cách xóa liên kết, bạn có thể ngừng công khai lịch sử cuộc trò chuyện.
   drop_files: Vui lòng thả file
+  hint_cmd_enter: ⌘ + Enter để gửi
+  hint_ctrl_enter: Ctrl + Enter để gửi
   history: Lịch sử cuộc trò chuyện
   initialize: Khởi tạo
   model_parameters: Tham số mô hình
@@ -650,6 +652,7 @@ setting:
     agent_enabled: Agent được bật
     language: Cài đặt ngôn ngữ
     language_help: Có thể thay đổi ngôn ngữ hiển thị
+    line_break_enter: Nhấn Enter để xuống dòng
     login_status: Trạng thái đăng nhập
     rag_enabled: RAG (Amazon Kendra) được bật
     rag_kb_enabled: RAG (Knowledge Base) được bật

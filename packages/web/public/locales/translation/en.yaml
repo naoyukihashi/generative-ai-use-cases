@@ -17,6 +17,8 @@ chat:
   delete_link: Delete Link
   delete_link_message: You can stop sharing the conversation history by deleting the link.
   drop_files: Drop files here
+  hint_cmd_enter: ⌘ + Enter to Submit
+  hint_ctrl_enter: Ctrl + Enter to Submit
   history: Conversation History
   initialize: Initialize
   model_parameters: Model Parameters
@@ -782,6 +784,7 @@ setting:
     agent_enabled: Agent Enabled
     language: Language
     language_help: Change display language
+    line_break_enter: Press Enter to create new line
     login_status: Login status
     rag_enabled: RAG (Amazon Kendra) Enabled
     rag_kb_enabled: RAG (Knowledge Base) Enabled
