@@ -1,6 +1,9 @@
 agent:
   drop_files: ファイルをドロップしてアップロード
   title: Agent チャット
+agent_core:
+  start_conversation: AgentCore と会話を始める
+  title: AgentCore
 auth:
   loading: 読み込み中...
   login: ログイン
@@ -357,7 +360,8 @@ generateText:
 landing:
   alert:
     description: >-
-      こちらは SA が内部デモのために利用する環境です。カスタマーにデモをする場合は、原則自分の AWS アカウントにデプロイしたものを利用してください。カスタマーのデータの入力や業務利用をしてはいけません。
+      こちらは SA が内部デモのために利用する環境です。カスタマーにデモをする場合は、原則自分の AWS
+      アカウントにデプロイしたものを利用してください。カスタマーのデータの入力や業務利用をしてはいけません。
     title: GenU デモ環境について
   demo:
     agent:
@@ -384,8 +388,7 @@ landing:
         スマホ広告のデザイン案を出力してください。
         可愛い、おしゃれ、使いやすい、POPカルチャー、親しみやすい、若者向け、音楽、写真、流行のスマホ、背景が街
     mcp:
-      content: >-
-        Amazon Bedrock のセキュリティについて調べてください。ユーザーの入力はモデルの学習に使われますか？
+      content: Amazon Bedrock のセキュリティについて調べてください。ユーザーの入力はモデルの学習に使われますか？
     rag:
       content: Claude のパラメータを説明し、その設定方法も教えてください。
     summarize:
@@ -418,6 +421,9 @@ landing:
         Agent チャットユースケースでは Agents for Amazon Bedrock を利用してアクションを実行させたり、Knowledge
         Bases for Amazon Bedrock のベクトルデータベースを参照することが可能です。
       title: Agent チャット
+    agent_core:
+      description: AgentCore チャットは Bedrock AgentCore で作成したさまざまな Agent を利用する機能です
+      title: AgentCore
     chat:
       description: >-
         LLM
@@ -445,7 +451,9 @@ landing:
       title: 画像生成
     mcp_chat:
       description: >-
-        MCP チャットは  Model Context Protocol (MCP) を通じて、Bedrock の LLM モデルと外部データや外部ツールをシームレスに連携させるチャット機能です。mcp.json を編集することで、自由にツールを追加できます。MCP のエージェントとして Strands Agents を活用しています。
+        MCP チャットは  Model Context Protocol (MCP) を通じて、Bedrock の LLM
+        モデルと外部データや外部ツールをシームレスに連携させるチャット機能です。mcp.json を編集することで、自由にツールを追加できます。MCP
+        のエージェントとして Strands Agents を活用しています。
       title: MCP チャット
     meeting-minutes:
       description: >-
@@ -1025,8 +1033,6 @@ videoAnalyzer:
 voiceChat:
   close: セッションを終了する
   default_system_prompt: You are an AI assistant.
-  experimental_warning: 音声チャットはまだ実験的な段階です。アーキテクチャ等は今後変更される可能性があります。会話履歴は保存されません。対応言語は英語のみです。
-  experimental_warning_title: 音声チャットについて
   im_listening: 発言してください
   start: セッションを始める
   title: 音声チャット

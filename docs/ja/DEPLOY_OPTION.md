@@ -584,6 +584,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ### MCP チャットユースケースの有効化
 
+> [!WARNING]
+> MCP チャットユースケースは Deprecated ステータスになりました。MCP の活用には AgentCore ユースケースをご利用ください。MCP チャットユースケースは v6 で完全削除予定です。
+
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) とは、LLM モデルと外部データやツールを繋ぐプロトコルです。
 GenU では [Strands Agents](https://strandsagents.com/latest/) を活用して MCP に準拠したツールを実行するチャットユースケースを用意しています。
 MCP チャットユースケースを有効化するためには、`docker` コマンドが実行可能である必要があります。
@@ -687,6 +690,57 @@ const envs: Record<string, Partial<StackInput>> = {
         "aliasId": "QQQQQQQQQQQ",
         "flowName": "TravelPlanFlow",
         "description": "与えられた配列をもとに、旅行計画を作成します。\n[{\"place\": \"東京\", \"day\": 3}, {\"place\": \"大阪\", \"day\": 2}] のように入力してください。"
+      }
+    ]
+  }
+}
+```
+
+### AgentCore ユースケースの有効化
+
+AgentCore で作成したエージェントと連携するユースケースです。(Experimental: 予告なく破壊的変更を行うことがあります)
+
+`createGenericAgentCoreRuntime` を有効化するとデフォルトの AgentCore Runtime がデプロイされます。
+デフォルトでは `modelRegion` にデプロイされますが、`agentCoreRegion` を指定し上書きすることが可能です。
+AgentCore で使用できるデフォルトのエージェントは、[mcp.json](https://github.com/aws-samples/generative-ai-use-cases/blob/main/packages/cdk/lambda-python/generic-agent-core-runtime/mcp.json) で定義する MCP サーバーを利用することができます。
+デフォルトで定義されている MCP サーバーは、AWS に関連する MCP サーバー及び、現在時刻に関連する MCP サーバーです。
+詳細は[こちら](https://awslabs.github.io/mcp/)のドキュメントをご参照ください。
+MCP サーバーを追加する場合は上述の `mcp.json` に追記してください。
+ただし、`uvx` 以外で起動する MCP サーバーは Dockefile の書き換え等開発が必要です。
+
+`agentCoreExternalRuntimes` で外部で作成した AgentCore Runtime を利用することが可能です。
+
+**[parameter.ts](/packages/cdk/parameter.ts) を編集**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    createGenericAgentCoreRuntime: true,
+    agentCoreRegion: 'us-west-2',
+    agentCoreExternalRuntimes: [
+      {
+        name: 'AgentCore1',
+        arn: 'arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx',
+      },
+    ],
+  },
+};
+```
+
+**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
+
+```json
+// cdk.json
+
+{
+  "context": {
+    "createGenericAgentCoreRuntime": true,
+    "agentCoreRegion": "us-west-2",
+    "agentCoreExternalRuntimes": [
+      {
+        "name": "AgentCore1",
+        "arn": "arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx"
       }
     ]
   }
@@ -953,7 +1007,9 @@ const envs: Record<string, Partial<StackInput>> = {
 "eu.amazon.nova-micro-v1:0",
 "apac.amazon.nova-pro-v1:0",
 "apac.amazon.nova-lite-v1:0",
-"apac.amazon.nova-micro-v1:0"
+"apac.amazon.nova-micro-v1:0",
+"openai.gpt-oss-120b-1:0",
+"openai.gpt-oss-20b-1:0"
 ```
 
 このソリューションが対応している speech-to-speech モデルは以下です。
@@ -1770,6 +1826,40 @@ Kendraのインデックスが削除されても、RAG機能はオンのまま�
 > - 現状では、起動・停止のエラーを通知する機能はありません。
 > - インデックスを再作成するたびに、IndexIdやDataSourceIdが変わります。他のサービスなどから参照している場合は、その変更に対応する必要があります。
 
+### タグを設定する方法
+
+GenU ではコスト管理等に使うためのタグをサポートしています。タグのキー名には、自動で `GenU` `が設定されます。
+以下に設定例を示します。
+
+`cdk.json` での設定方法
+
+```json
+// cdk.json
+  ...
+  "context": {
+    "tagValue": "dev",
+    ...
+```
+
+`parameter.ts` での設定方法
+
+```typescript
+    ...
+    tagValue: "dev",
+    ...
+```
+
+ただし、いくつかのリソースについてタグが利用できません。
+
+- クロスリージョン推論のモデル呼び出し
+- 音声チャットのモデル呼び出し
+
+タグによるコスト管理を行う際は、以下の手順で「コスト配分タグ」を有効化する必要があります。
+
+- 「Billing and Cost Management」コンソールを開く
+- 左のメニューの「コスト配分タグ」を開く
+- 「ユーザー定義のコスト配分タグ」からタグキーが "GenU" のタグを「有効化」する
+
 ## モニタリング用のダッシュボードの有効化
 
 入力/出力 Token 数や直近のプロンプト集などが集約されたダッシュボードを作成します。
@@ -2049,3 +2139,8 @@ npm run cdk:deploy -- -c env=<環境名>
   }
 }
 ```
+
+## 閉域環境から GenU を使う場合
+
+閉域環境から GenU を利用するには、閉域モードの GenU をデプロイする必要があります。
+閉域モードの GenU のデプロイ方法は [こちら](./CLOSED_NETWORK.md) をご参照ください。

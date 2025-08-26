@@ -569,6 +569,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ### Enabling MCP Chat Use Case
 
+> [!WARNING]
+> The MCP Chat use case has been deprecated. Please use the AgentCore use case for MCP utilization. The MCP chat use case is scheduled for complete removal in v6.
+
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) is a protocol that connects LLM models with external data and tools.
 In GenU, we provide chat use cases that execute MCP-compliant tools using [Strands Agents](https://strandsagents.com/latest/).
 To enable MCP chat use cases, the `docker` command must be executable.
@@ -672,6 +675,57 @@ const envs: Record<string, Partial<StackInput>> = {
         "aliasId": "QQQQQQQQQQQ",
         "flowName": "TravelPlanFlow",
         "description": "Creates a travel plan based on the given array.\nPlease enter like [{\"place\": \"Tokyo\", \"day\": 3}, {\"place\": \"Osaka\", \"day\": 2}]."
+      }
+    ]
+  }
+}
+```
+
+### Enabling AgentCore Use Cases
+
+This is a use case for integrating with agents created in AgentCore. (Experimental: Breaking changes may be made without notice)
+
+Enabling `createGenericAgentCoreRuntime` will deploy the default AgentCore Runtime.
+By default, it is deployed to the `modelRegion`, but you can override this by specifying `agentCoreRegion`.
+The default agents available in AgentCore can utilize MCP servers defined in [mcp.json](https://github.com/aws-samples/generative-ai-use-cases/blob/main/packages/cdk/lambda-python/generic-agent-core-runtime/mcp.json).
+The MCP servers defined by default are AWS-related MCP servers and MCP servers related to current time.
+For details, please refer to the documentation [here](https://awslabs.github.io/mcp/).
+When adding MCP servers, please add them to the aforementioned `mcp.json`.
+However, MCP servers that start with methods other than `uvx` require development work such as rewriting the Dockerfile.
+
+With `agentCoreExternalRuntimes`, you can use externally created AgentCore Runtimes.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    createGenericAgentCoreRuntime: true,
+    agentCoreRegion: 'us-west-2',
+    agentCoreExternalRuntimes: [
+      {
+        name: 'AgentCore1',
+        arn: 'arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx',
+      },
+    ],
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+
+{
+  "context": {
+    "createGenericAgentCoreRuntime": true,
+    "agentCoreRegion": "us-west-2",
+    "agentCoreExternalRuntimes": [
+      {
+        "name": "AgentCore1",
+        "arn": "arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx"
       }
     ]
   }
@@ -938,7 +992,9 @@ This solution supports the following text generation models:
 "eu.amazon.nova-micro-v1:0",
 "apac.amazon.nova-pro-v1:0",
 "apac.amazon.nova-lite-v1:0",
-"apac.amazon.nova-micro-v1:0"
+"apac.amazon.nova-micro-v1:0",
+"openai.gpt-oss-120b-1:0",
+"openai.gpt-oss-20b-1:0"
 ```
 
 This solution supports the following speech-to-speech models:
@@ -1763,6 +1819,39 @@ EventBridge rules are used for scheduling, and Step Functions for process contro
 > - Currently, there's no feature to notify of startup/shutdown errors.
 > - Each time the index is recreated, the IndexId and DataSourceId change. If other services reference these, you'll need to adapt to these changes.
 
+### How to Set Tags
+
+GenU supports tags for cost management and other purposes. The key name of the tag is automatically set to `GenU` `. Here are examples of how to set them:
+
+Setting in `cdk.json`:
+
+```json
+// cdk.json
+  ...
+  "context": {
+    "tagValue": "dev",
+    ...
+```
+
+Setting in `parameter.ts`:
+
+```typescript
+    ...
+    tagValue: "dev",
+    ...
+```
+
+However, tags cannot be used with some resources:
+
+- Cross-region inference model calls
+- Voice chat model calls
+
+When managing costs using tags, you need to enable “Cost allocation tags” by following these steps.
+
+- Open the “Billing and Cost Management” console.
+- Open “Cost Allocation Tags” in the left menu.
+- Activate the tag with the tag key “GenU” from “User-defined cost allocation tags.”
+
 ## Enabling Monitoring Dashboard
 
 Create a dashboard that aggregates input/output token counts and recent prompts.
@@ -2042,3 +2131,8 @@ Configuration example
   }
 }
 ```
+
+## Using GenU from a Closed Network Environment
+
+To use GenU from a closed network environment, you need to deploy GenU in closed network mode.
+Please refer to [here](./CLOSED_NETWORK.md) for instructions on how to deploy GenU in closed network mode.
